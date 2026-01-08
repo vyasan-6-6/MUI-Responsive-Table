@@ -53,22 +53,46 @@ const Cell = styled(TableCell)(({theme})=>({
 const MuiTable = () => {
  const [searchTerm,setSearchTerm] = React.useState('');
  const [sort,setSort] = React.useState('');
- const [order,setOrder] = React.useState("asc")
+ const [order,setOrder] = React.useState("asc");
+ const [page, setPage] = React.useState(1);
+ React.useEffect(()=>{
+  setPage(1);
+ },[sort,order])
 
  
    const filterData =  Datas.filter(row=>{
      return Object.values(row).join().toLowerCase().includes(searchTerm.toLowerCase());
      
    })
-  const [page, setPage] = React.useState(1);
-  const TotalPost  = filterData.length;
-  const PostPerPage  = 8;
-  const TotalPages  = Math.ceil(TotalPost/PostPerPage);
-
-  const startIndex = (page-1) * PostPerPage;
-  const endIndex = startIndex + PostPerPage;
-  const currentData = filterData.slice(startIndex,endIndex);
+   
+   const sortedData = React.useMemo(()=>{
+     if(!sort) return filterData;
+     
+     return [...filterData].sort((a,b)=>{
+       let valueA = a[sort];
+       let valueB = b[sort];
+       
+       if(sort === "date"){
+         valueA = new Date(valueA);
+         valueB = new Date(valueB);
+        }
+        
+        if(valueA<valueB) return order ==="asc"? -1:1;
+        if(valueA>valueB) return order ==="asc"?1:-1;
+        
+        return 0;
+      })
+    },[filterData,sort,order])
+    
+    
+    const TotalPost  = sortedData.length;
+    const PostPerPage  = 8;
+    const TotalPages  = Math.ceil(TotalPost/PostPerPage);
   
+    const startIndex = (page-1) * PostPerPage;
+    const endIndex = startIndex + PostPerPage;
+    const currentData = sortedData.slice(startIndex,endIndex);
+    
   const handleChange = (event, value) => {
     setPage(value);
   };
@@ -82,6 +106,9 @@ const MuiTable = () => {
   const handleOrder = ()=>{
     setOrder(pre=> pre==="asc"? "desc" : "asc")
   }
+
+
+
   return (
     <Box bgcolor={"#969090ff"}>
       <Navbar onSearch={handleSearch} />
@@ -110,7 +137,7 @@ const MuiTable = () => {
         </Select>
        </FormControl>
        <IconButton size='small' onClick={handleOrder} >{
-         order === "ascending" ? (<ArrowDropDownIcon/>):(<ArrowDropUpIcon/>) 
+order === "asc" ? <ArrowDropUpIcon/> : <ArrowDropDownIcon/>
         }<Typography variant='body1'>{order}</Typography></IconButton>
         </Stack>
 
