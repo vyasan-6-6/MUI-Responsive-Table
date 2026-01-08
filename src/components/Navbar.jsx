@@ -1,12 +1,16 @@
 import { styled, alpha } from '@mui/material/styles';
+ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
-import MenuIcon from '@mui/icons-material/Menu';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import SearchIcon from '@mui/icons-material/Search';
+import PersonIcon from '@mui/icons-material/Person';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Badge, Stack } from '@mui/material';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -33,6 +37,11 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   justifyContent: 'center',
 }));
 
+const StyledAppbar = styled(AppBar)(({ theme }) => ({
+   background:"white",
+   color:"black"
+}));
+
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'inherit',
   width: '100%',
@@ -50,10 +59,20 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function Navbar() {
+export default function Navbar({onSearch}) {
+      const [search,setSearch] = React.useState('');
+      const handleSearch = (e) =>{
+        const value = e.target.value;
+        setSearch(value);
+        onSearch(search);
+
+      }
+    
   return (
+    <>
+    
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <StyledAppbar position="fixed">
         <Toolbar>
           <IconButton
             size="large"
@@ -62,7 +81,7 @@ export default function Navbar() {
             aria-label="open drawer"
             sx={{ mr: 2 }}
           >
-            <MenuIcon />
+            <CheckCircleIcon/>
           </IconButton>
           <Typography
             variant="h6"
@@ -72,17 +91,29 @@ export default function Navbar() {
           >
             MUI
           </Typography>
-          <Search>
+          <Search sx={{mx:3}}>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
+            onChange={handleSearch}
               placeholder="Search…"
               inputProps={{ 'aria-label': 'search' }}
             />
           </Search>
+          
+    <Stack spacing={2} direction="row">
+      <Badge badgeContent={4} color="secondary">
+        <PersonIcon color="action" />
+      </Badge>
+      <Badge badgeContent={4} color="success">
+        <MenuIcon color="primary" />
+      </Badge>
+    </Stack>
+ 
+
         </Toolbar>
-      </AppBar>
-    </Box>
+      </StyledAppbar>
+    </Box></>
   );
 }

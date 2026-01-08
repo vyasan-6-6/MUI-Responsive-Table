@@ -1,16 +1,21 @@
-import { Box } from "@mui/material"
+import { Box, Stack } from "@mui/material"
 import Table from "./components/Table"
-import Navbar from "./components/Navbar"
+import Navbar from "./components/Navbar" 
 
  
 
 function App() {
    
   return (
-    <Box>
-      <Navbar/>
-       <Table/>
+    <>
+    <Navbar  />
+    <Box  mt={8}>
+       <Stack >
+        <Table/>
+     
+       </Stack>
     </Box>
+    </>
   )
 }
 
