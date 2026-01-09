@@ -59,13 +59,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+
 export default function Navbar({onSearch}) {
       const [search,setSearch] = React.useState('');
       const handleSearch = (e) =>{
-        const value = e.target.value;
+        const value = e.target.value ;
         setSearch(value);
         onSearch(search);
-
       }
     
   return (
