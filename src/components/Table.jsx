@@ -49,65 +49,61 @@ const Cell = styled(TableCell)(({ theme }) => ({
 }));
 
 const MuiTable = () => {
-    const [searchTerm, setSearchTerm] = React.useState("");
-    const [sort, setSort] = React.useState("");
-    const [order, setOrder] = React.useState("asc");
-    const [page, setPage] = React.useState(1);
-    React.useEffect(() => {
-        setPage(1);
-    }, [sort, order]);
-    
-    React.useEffect(() => {
-  if (page > TotalPages) {
-    setPage(1);
-  }
-}, [TotalPages]);
-
-
-    const filterData = React.useMemo(()=>{
-      const term =  searchTerm.trim().toLowerCase();
-      if(!term) return Datas;
-
-      return Datas.filter(row=> 
-        Object.values(row).join().toLowerCase().includes(term)
-         
-      )
-    },[searchTerm])
-
-    const sortedData = React.useMemo(() => {
-        if (!sort) return filterData;
-
-        return [...filterData].sort((a, b) => {
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [sort, setSort] = React.useState("");
+  const [order, setOrder] = React.useState("asc");
+  const [page, setPage] = React.useState(1); 
+  
+   const filterData = React.useMemo(()=>{
+              const term =  searchTerm.trim().toLowerCase();
+              if(!term) return Datas;
+        
+              return Datas.filter(row=> 
+                Object.values(row).join().toLowerCase().includes(term) ) },[searchTerm])
+  
+      const sortedData = React.useMemo(() => {
+          if (!sort) return filterData;
+          
+          return [...filterData].sort((a, b) => {
             let valueA = a[sort];
             let valueB = b[sort];
-
+            
             if (sort === "date") {
-                valueA = new Date(valueA);
-                valueB = new Date(valueB);
+              valueA = new Date(valueA);
+              valueB = new Date(valueB);
             }
-
+            
             if (valueA < valueB) return order === "asc" ? -1 : 1;
             if (valueA > valueB) return order === "asc" ? 1 : -1;
-
+            
             return 0;
-        });
-    }, [filterData, sort, order]);
-
-    const TotalPost = sortedData.length;
-    const PostPerPage = 8;
-    const TotalPages = Math.ceil(TotalPost / PostPerPage);
-
-    const startIndex = (page - 1) * PostPerPage;
-    const endIndex = startIndex + PostPerPage;
-    const currentData = sortedData.slice(startIndex, endIndex);
+          });
+        }, [filterData, sort, order]);
+        
+        const TotalPost = sortedData.length;
+        
+        const PostPerPage = 8;
+        const TotalPages = Math.ceil(TotalPost / PostPerPage);
+        
+        React.useEffect(() => {
+          setPage(1);
+        }, [sort, order,searchTerm]);
+       
+    
+        const startIndex = (page - 1) * PostPerPage;
+        const endIndex = startIndex + PostPerPage;
+        const currentData = sortedData.slice(startIndex, endIndex);
 
     const handleChange = (event, value) => {
         setPage(value);
     };
 
+    
+
+    
     const handleSearch = (value) => {
-        setSearchTerm(value.trim());
-        setPage(1);
+     setSearchTerm(value.trim());
+    
     };
 
     const handleOrder = () => {
